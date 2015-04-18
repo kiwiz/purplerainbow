@@ -21,5 +21,3 @@ def get_analysis_estimate_data(ticker):
         ret.append(release.update(details))
 
     return ret
-
-get_analysis_estimate_data('APPL')
