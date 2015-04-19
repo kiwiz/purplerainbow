@@ -16,7 +16,7 @@ class PsychSignal(object):
         return
 
     def data(self, symbol):
-        days = 10
+        days = 365 * 3
         from_date = self.now - datetime.timedelta(days)
         from_date_s = from_date.strftime("%Y-%m-%d")
         params = {'update':'1d','to':self.to_date,'from':from_date_s,'sources':self.sources,'symbols':self.symbol}
@@ -30,15 +30,17 @@ class PsychSignal(object):
         datalist = []
 
         for i in range(0,len(data)):
-            val = data[i].get('timestamp_utc');
+            val = data[i].get('timestamp_utc')
             dateval = val[0:val.index('T')]
-            bull = data[i].get('bullish_intensity');
-            bear = data[i].get('bearish_intensity');
-            bull_bear = data[i].get('bull_minus_bear');
-            tupledata = [dateval, bull, bear, bull_bear]
+            bull = data[i].get('bullish_intensity')
+            bear = data[i].get('bearish_intensity')
+            bull_bear = data[i].get('bull_minus_bear')
+            no_bull = data[i].get('bull_scored_messages')
+            no_bear = data[i].get('bear_scored_messages')
+            tupledata = [dateval, bull, bear, bull_bear, no_bull, no_bear]
             datalist.append(tupledata)
 
-        return {symbol:datalist}
+        return datalist
 
     def change(self, symbol):
         self.symbol = symbol
@@ -95,8 +97,7 @@ class PsychSignal(object):
         return (self.KEY_URL + params_string)
 
     def _make_request(self, url):
-
-        response = requests.get(url)
+        response = requests.get(url, verify=False)
         response.raise_for_status()
         return response.json()
 
@@ -118,3 +119,12 @@ def get_stock_sentiment_data(ticker):
     return ps.data(ticker)
 
 def store_stock_sentiment_data(conn, data):
+    for row in data:
+        ks = ['date', 'bullish_index', 'bearish_index', 'bull_bear_difference', 'no_bull_tweets', 'no_bear_tweets']
+        vs = row
+        ret = conn.execute('INSERT INTO `daily_sentiment`(%s) VALUES(%s)' % (
+            ','.join(ks), ','.join((['?']*len(ks)))
+        ), vs)
+        conn.commit()
+
+print get_stock_sentiment_data('AAPL')

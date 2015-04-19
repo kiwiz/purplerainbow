@@ -18,24 +18,44 @@ def get_fundamental_data(ticker):
     apiKey   = 'huFif6YjwJKCfmKXIZn1E1xy'
     agg = []
 
-    for y in range( currYear - 2, currYear ):
+    for y in range( currYear - 2, currYear + 1 ):
+
+        cumFields = {
+            'NetIncomeCashFlow' : 0
+        }
+
         for q in range( 1, 5 ):
 
             map = {}
+
+            for f in fields:
+                if q < 4:
+                    query = 'https://api.tagnifi.com/fundamentals?tag={0}&company={1}&fiscal_year={2}&fiscal_quarter={3}&period_type=quarter'.format(f, ticker, y, q)
+                else:
+                    query = 'https://api.tagnifi.com/fundamentals?tag={0}&company={1}&fiscal_year={2}&period_type=annual'.format(f, ticker, y)
+                
+                r = requests.get( query, auth=( apiKey, '' ), verify=False )
+
+                try:
+                    j = r.json()
+                    n = j.get( 'fundamentals' )[0].get( 'tags' )[0].get( 'name' )
+                    n = mapping[ n ]
+                    v = j.get( 'fundamentals' )[0].get( 'tags' )[0].get( 'value' )
+                except ValueError:
+                    print( 'err\n\n' )
+                    print( query )
+                    continue
+            
+                if q == 4 and f in cumFields.keys():
+                    v -= cumFields[ f ]
+                elif f in cumFields.keys():
+                    cumFields[ f ] += v
+
+                map[ n ] = v
+
             map[ 'ticker' ] = ticker
             map[ 'fiscal_year' ] = y
             map[ 'fiscal_qtr'  ] = q
-
-            for f in fields:
-                query = 'https://api.tagnifi.com/fundamentals?tag={0}&company={1}&fiscal_year={2}&fiscal_quarter={3}&period_type=quarter'.format(f, ticker, y, q)
-                r = requests.get( query, auth=( apiKey, '' ), verify=False )
-                j = r.json()
-
-                n = j.get( 'fundamentals' )[0].get( 'tags' )[0].get( 'name' )
-                n = mapping[ n ]
-                v = j.get( 'fundamentals' )[0].get( 'tags' )[0].get( 'value' )
-            
-                map[ n ] = v
 
             agg.append( map )
 
