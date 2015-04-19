@@ -1,7 +1,7 @@
 import requests
 import datetime
 
-class StockTwits(object):
+class PsychSignal(object):
     key = 'fth150ddb474d646b2330eb808a3b7bb29f13'
     BASE_URL = 'https://api.psychsignal.com/v2/historical_sentiments?api_key='
     KEY_URL = BASE_URL + key
@@ -113,6 +113,8 @@ class StockTwits(object):
         return (total_messages,float(bearish_intensity)/lendata, float(bullish_intensity)/lendata)
 
 def get_stock_sentiment_data(ticker):
-    stocktwit = stocktwits.StockTwits()
-    stocktwit.change(ticker)
-    return stocktwit.data(ticker)
+    ps = PsychSignal()
+    ps.change(ticker)
+    return ps.data(ticker)
+
+def store_stock_sentiment_data(conn, data):

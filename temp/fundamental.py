@@ -3,7 +3,8 @@ import json
 
 def get_fundamental_data(ticker):
 
-    fields = ['NetIncomeCashFlow', 'ConsolidatedNetIncomeLoss', 'TotalAssets', 'TotalLiabilities'];
+    fields = ['NetIncomeCashFlow']
+#, 'ConsolidatedNetIncomeLoss', 'TotalAssets', 'TotalLiabilities'];
 
     mapping = {
         'Total Liabilities':'total_liabilities',
@@ -18,7 +19,7 @@ def get_fundamental_data(ticker):
     agg = []
 
     for y in range( currYear - 2, currYear ):
-        for q in range( 1, 4 ):
+        for q in range( 1, 5 ):
 
             map = {}
             map[ 'ticker' ] = ticker
@@ -49,8 +50,8 @@ def store_fundamental_data(conn, data):
         ), vs)
         conn.commit()
 
-#r = get_fundamental_data('msft')
-#print( r )
+r = get_fundamental_data('msft')
+print( r )
 
 
 
