@@ -1,17 +1,16 @@
 from estimize_connector import *
-from fundamental import *
+from psychsignal import *
+#from fundamental import *
 import sqlite3
 
 DAILY_SENTIMENT_SQL = """
 CREATE TABLE daily_sentiment(
-    id serial,
-    stock_symbol primary_key varchar(10),
     date date,
-    bearish_index decimal,
     bullish_index decimal,
-bull_bear_difference decimal,
-no_bull_tweets decimal,
-no_bear_tweets decimal
+    bearish_index decimal,
+    bull_bear_difference decimal,
+    no_bull_tweets decimal,
+    no_bear_tweets decimal
 )
 """
 
@@ -77,11 +76,12 @@ CREATE TABLE `fundamental` (
 )
 """
 
-conn = sqlite3.connect('WOWCOOL.db')
-#conn.execute(DAILY_SENTIMENT_SQL)
+conn = sqlite3.connect('dongers')
+conn.execute(DAILY_SENTIMENT_SQL)
 #conn.execute(SENTIMENT_CHANGE_SQL)
 #conn.execute(ANALYSIS_ESTIMATE_SQL)
 #conn.execute(FUNDAMENTAL_SQL)
 
 #store_analysis_estimate_data(conn, get_analysis_estimate_data('AAPL'))
-store_fundamental_data(conn, get_fundamental_data('AAPL'))
+#store_fundamental_data(conn, get_fundamental_data('AAPL'))
+store_stock_sentiment_data(conn, get_stock_sentiment_data('AAPL'))
