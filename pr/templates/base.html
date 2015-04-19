@@ -50,7 +50,7 @@
       </div>
     </nav>
 
-    <div class="container">
+    <div class="container" id="main">
       {% block content %}{% endblock %}
     </div> <!-- /container -->
 
@@ -60,6 +60,8 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/stx.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/stxKernelOs.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   </body>
 </html>
