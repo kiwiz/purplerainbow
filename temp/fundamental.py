@@ -5,6 +5,14 @@ def get_fundamental_data(ticker):
 
     fields = ['NetIncomeCashFlow', 'ConsolidatedNetIncomeLoss', 'TotalAssets', 'TotalLiabilities'];
 
+    mapping = {
+        'Total Liabilities':'total_liabilities',
+        'Consolidated Net Income (Loss)':'consolidated_net_income_loss',
+        'Net Income':'net_income',
+        'Total Assets':'total_assets',
+        'ticker':'ticker',
+    }
+
     currYear = 2015
     apiKey   = 'huFif6YjwJKCfmKXIZn1E1xy'
     agg = []
@@ -14,8 +22,8 @@ def get_fundamental_data(ticker):
 
             map = {}
             map[ 'ticker' ] = ticker
-            map[ 'fiscalYear' ] = y
-            map[ 'fiscalQtr'  ] = q
+            map[ 'fiscal_year' ] = y
+            map[ 'fiscal_qtr'  ] = q
 
             for f in fields:
                 query = 'https://api.tagnifi.com/fundamentals?tag={0}&company={1}&fiscal_year={2}&fiscal_quarter={3}&period_type=quarter'.format(f, ticker, y, q)
@@ -23,7 +31,7 @@ def get_fundamental_data(ticker):
                 j = r.json()
 
                 n = j.get( 'fundamentals' )[0].get( 'tags' )[0].get( 'name' )
-                n = n.replace( n.replace( n.replace( ' ', '' ), '(', '' ), ')', '' )
+                n = mapping[ n ]
                 v = j.get( 'fundamentals' )[0].get( 'tags' )[0].get( 'value' )
             
                 map[ n ] = v
@@ -41,8 +49,8 @@ def store_fundamental_data(conn, data):
         ), vs)
         conn.commit()
 
-r = get_fundamental_data('msft')
-print( r )
+#r = get_fundamental_data('msft')
+#print( r )
 
 
 
