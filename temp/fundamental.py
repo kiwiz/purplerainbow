@@ -3,15 +3,13 @@ import json
 
 def get_fundamental_data(ticker):
 
-    fields = ['NetIncomeCashFlow']
-#, 'ConsolidatedNetIncomeLoss', 'TotalAssets', 'TotalLiabilities'];
+    fields = ['ConsolidatedNetIncomeLoss', 'TotalAssets', 'TotalLiabilities'];
 
     mapping = {
-        'Total Liabilities':'total_liabilities',
-        'Consolidated Net Income (Loss)':'consolidated_net_income_loss',
-        'Net Income':'net_income',
-        'Total Assets':'total_assets',
-        'ticker':'ticker',
+        'TotalLiabilities':'total_liabilities',
+        'ConsolidatedNetIncomeLoss':'consolidated_net_income_loss',
+#        'ChangeCashEquivalents':'cashflow',
+        'TotalAssets':'total_assets',
     }
 
     currYear = 2015
@@ -21,12 +19,13 @@ def get_fundamental_data(ticker):
     for y in range( currYear - 2, currYear + 1 ):
 
         cumFields = {
-            'NetIncomeCashFlow' : 0
+            'ConsolidatedNetIncomeLoss' : 0
         }
 
         for q in range( 1, 5 ):
 
             map = {}
+            err = False
 
             for f in fields:
                 if q < 4:
@@ -38,13 +37,14 @@ def get_fundamental_data(ticker):
 
                 try:
                     j = r.json()
-                    n = j.get( 'fundamentals' )[0].get( 'tags' )[0].get( 'name' )
-                    n = mapping[ n ]
-                    v = j.get( 'fundamentals' )[0].get( 'tags' )[0].get( 'value' )
                 except ValueError:
-                    print( 'err\n\n' )
-                    print( query )
+                    err = True
+#                    print( '\n\n' )
+#                    print( query )
                     continue
+
+                n = mapping[ f ]
+                v = j.get( 'fundamentals' )[0].get( 'tags' )[0].get( 'value' )
             
                 if q == 4 and f in cumFields.keys():
                     v -= cumFields[ f ]
@@ -53,11 +53,11 @@ def get_fundamental_data(ticker):
 
                 map[ n ] = v
 
-            map[ 'ticker' ] = ticker
-            map[ 'fiscal_year' ] = y
-            map[ 'fiscal_qtr'  ] = q
-
-            agg.append( map )
+            if err == False:
+                map[ 'ticker' ] = ticker
+                map[ 'fiscal_year' ] = y
+                map[ 'fiscal_qtr'  ] = q
+                agg.append( map )
 
     return agg
 
@@ -70,8 +70,8 @@ def store_fundamental_data(conn, data):
         ), vs)
         conn.commit()
 
-r = get_fundamental_data('msft')
-print( r )
+#r = get_fundamental_data('ko')
+#print( r )
 
 
 
