@@ -13,7 +13,7 @@ except IOError:
 #
 
 from pr import app as application
-application.run('0.0.0.0', debug=True)
+application.run('0.0.0.0', debug=True, port=8051)
 #
 # Below for testing only
 #

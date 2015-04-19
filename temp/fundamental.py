@@ -101,6 +101,10 @@ def get_fundamental_data(ticker):
                 structure[ 'fiscal_qtr'  ] = q
                 agg.append( structure )
 
+    for row in agg:
+        row[ 'annualized_return_to_equity' ] = row[ 'consolidated_net_income_loss' ] / ( row[ 'total_assets' ] - row[ 'total_liabilities' ] )
+        row[ 'debt_to_asset_ratio' ] = row[ 'total_liabilities' ] / row[ 'total_assets' ]
+
     return agg
 
 def store_fundamental_data(conn, data):
