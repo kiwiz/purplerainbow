@@ -30,12 +30,15 @@ class StockTwits(object):
         datalist = []
 
         for i in range(0,len(data)):
-        	val = data[i].get('timestamp_utc');
+        	val = data[i].get('timestamp_utc')
         	dateval = val[0:val.index('T')]
-        	bull = data[i].get('bullish_intensity');
-        	bear = data[i].get('bearish_intensity');
-        	bull_bear = data[i].get('bull_minus_bear');
-        	tupledata = [dateval, bull, bear, bull_bear]
+        	bull = data[i].get('bullish_intensity')
+        	bear = data[i].get('bearish_intensity')
+        	bull_bear = data[i].get('bull_minus_bear')
+            bull_no = data[i].get('bull_scored_messages')
+            bear_no = data[i].get('bull_scored_messages')
+
+        	tupledata = [dateval, bull, bear, bull_bear, bull_no, bear_no]
         	datalist.append(tupledata)
 
         return {symbol:datalist}
