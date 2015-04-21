@@ -13,12 +13,12 @@ except IOError:
 #
 
 from pr import app as application
-application.run('0.0.0.0', debug=True, port=8051)
+#application.run('0.0.0.0', debug=True, port=8051)
 #
 # Below for testing only
 #
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
-    httpd = make_server('0.0.0.0', 8051, application)
+    httpd = make_server('0.0.0.0', 80, application)
     # Wait for a single request, serve it and quit.
     httpd.serve_forever()

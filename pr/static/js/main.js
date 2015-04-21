@@ -1,15 +1,128 @@
 
-var sampleData=[{"Date":"1993-01-29","Open":43.97,"High":43.97,"Low":43.75,"Close":43.94,"Volume":1003200,"Adj_Close":31.16},
-{"Date":"1993-02-01","Open":43.97,"High":44.25,"Low":43.97,"Close":44.25,"Volume":480500,"Adj_Close":31.38},
-{"Date":"1993-02-02","Open":44.22,"High":44.38,"Low":44.13,"Close":44.34,"Volume":201300,"Adj_Close":31.44},
-{"Date":"1993-02-03","Open":44.41,"High":44.84,"Low":44.38,"Close":44.81,"Volume":529400,"Adj_Close":31.77}
-];
+function xtract(keys, data) {
+    var ndata = {};
+    for(var i = 0; data.length > i; ++i) {
+        for(var j = 0; keys.length > j; ++j) {
+            if(!(keys[j] in ndata)) {
+                ndata[keys[j]] = [];
+            }
+            ndata[keys[j]].push([
+                new Date(data[i]['date']),
+                data[i][keys[j]]
+            ]);
+        }
+    }
+    var nndata = [];
+    for(var k in ndata) {
+        nndata.push({
+            name: k,
+            data: ndata[k]
+        })
+    }
+    return nndata;
+}
+
+var data1 = [];
+var categories1 = [];
+for(var i = 0; i < data[0].length; ++i) {
+    data1.push(data[0][i]['consolidated_net_income_loss']);
+    categories1.push(data[0][i]['fiscal_year'] + ', Q' + data[0][i]['fiscal_qtr']);
+}
+
+var data2 = [];
+var categories2 = [];
+for(var i = 0; i < data[1].length; ++i) {
+    data2.push(data[1][i]['estimize_eps_count']);
+    categories2.push(data[1][i]['fiscal_year'] + ', Q' + data[1][i]['fiscal_qtr']);
+}
+
+var data3 = [];
+var categories3 = [];
+for(var i = 0; i < data[2].length; ++i) {
+    data3.push([
+        data[2][i]['date'],
+        data[2][i]['bull_bear_difference']
+    ]);
+}
+
+var data4 = [];
+var categories4 = [];
+for(var i = 0; i < data[3].length; ++i) {
+    if (isNaN(data[3][i]['rolling'])) {
+        data[3][i]['rolling'] = 0;
+    }
+    data4.push([
+        data[3][i]['date'],
+        data[3][i]['rolling']
+    ]);
+}
+
 
 $(function() {
-    var stxx=new STXChart({container:$$$(".chartContainer")}); // Declare a STXChart object. This is the main object for drawing charts.
-
-setTimeout(function() {
-    stxx.newChart("SPY", historicalQuote);
-}, 2000);
+    $('#chart-container1').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Consolidated Net Income/Loss (Tagnifi)'
+        },
+        xAxis: {
+            categories: categories1
+        },
+        yAxis: {
+            title: {
+                text: 'USD'
+            }
+        },
+        series: [{
+            name: 'Income',
+            data: data1
+        }]
+    });
+    $('#chart-container2').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'EPS Count (Estimize)'
+        },
+        xAxis: {
+            categories: categories2
+        },
+        series: [{
+            name: 'Count',
+            data: data2
+        }]
+    });
+    $('#chart-container3').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Bull/Bear Difference (PsychSignal)'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        series: [{
+            name: 'Delta',
+            data: data3
+        }]
+    });
+    $('#chart-container4').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Rolling Bull/Bear Difference (PsychSignal)'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        series: [{
+            name: 'Delta',
+            data: data4
+        }]
+    });
 });
 

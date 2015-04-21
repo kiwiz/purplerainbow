@@ -126,5 +126,3 @@ def store_stock_sentiment_data(conn, data):
             ','.join(ks), ','.join((['?']*len(ks)))
         ), vs)
         conn.commit()
-
-print get_stock_sentiment_data('AAPL')
